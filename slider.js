@@ -1,4 +1,4 @@
-class CustomComponent extends HTMLElement {
+class CardSliderComponent extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -258,4 +258,4 @@ class CustomComponent extends HTMLElement {
 }
 
 // Register the custom component
-customElements.define("card-slider", CustomComponent);
+customElements.define("card-slider", CardSliderComponent);
