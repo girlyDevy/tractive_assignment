@@ -21,8 +21,13 @@ class CardSliderComponent extends HTMLElement {
   }
 
   render(numCards, cardData) {
-    const appTitle = document.getElementById("appTitle");
-    appTitle.innerHTML = "You might find those interesting";
+    const appTitle = document.createElement("h3");
+    appTitle.className = "app-title";
+    appTitle.textContent =
+      this.viewportWidth < 768
+        ? "Complete your dog look"
+        : "You might find those interesting";
+
     const wrapper = document.createElement("div");
     wrapper.className = "wrapper";
     const container = document.createElement("div");
@@ -31,6 +36,7 @@ class CardSliderComponent extends HTMLElement {
     for (let i = 0; i < numCards; i++) {
       const card = document.createElement("div");
       card.className = "card";
+
       if (i < cardData?.length) {
         const data = cardData[i];
         card.innerHTML = `
@@ -40,21 +46,18 @@ class CardSliderComponent extends HTMLElement {
           <button class="card-button">Add to cart</button>
         `;
       }
+
       container.appendChild(card);
-      wrapper.appendChild(container);
-
-      // Append the card to the container
-
-      // wrapper.appendChild(container);
-      // appTitleDiv.appendChild(wrapper);
-      //   this.createSliderControll(numCards);
     }
+
+    wrapper.appendChild(container);
 
     this.shadowRoot.innerHTML = `
     <style>
     .app-title{
         font-size: 30px;
         font-weight: 300;
+        padding-left:100px
     
       }
       .app-title-div{
@@ -181,10 +184,11 @@ class CardSliderComponent extends HTMLElement {
         to {opacity: 1}
       }
       }
+      </style>
     
       `;
 
-    // Append appTitleDiv to the shadow root
+    this.shadowRoot.appendChild(appTitle);
     this.shadowRoot.appendChild(wrapper);
   }
   showSlides(n) {
@@ -212,7 +216,7 @@ class CardSliderComponent extends HTMLElement {
   }
 
   createSliderControll(numCards) {
-    const appTitle = document.getElementById("appTitle");
+    const appTitle = this.shadowRoot.querySelector(".app-title");
 
     const wrapper = this.shadowRoot.querySelector(".wrapper");
     const existingDotContainer = this.shadowRoot.querySelector("#dotContainer");
@@ -226,7 +230,7 @@ class CardSliderComponent extends HTMLElement {
     this.viewportWidth = window.innerWidth;
 
     if (this.viewportWidth < 768) {
-      appTitle.innerHTML = "Complete your dog look";
+      appTitle.textContent = "Complete your dog look";
       for (let i = 0; i < numCards; i++) {
         const dotElem = document.createElement("span");
         dotElem.className = "dot";
@@ -245,7 +249,7 @@ class CardSliderComponent extends HTMLElement {
         }
       });
     } else {
-      appTitle.innerHTML = "You might find those interesting";
+      appTitle.textContent = "You might find those interesting";
       const cards = this.shadowRoot.querySelectorAll(".card");
       cards.forEach((card) => {
         card.style.display = "block";
