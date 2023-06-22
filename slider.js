@@ -9,10 +9,10 @@ class CardSliderComponent extends HTMLElement {
     const numCards = cardData.length || 4;
     this.render(numCards, cardData);
     this.viewportWidth = window.innerWidth;
-
+    this.breakWidth = 768;
     this.current = 0;
     this.render(numCards, cardData);
-    if (this.viewportWidth < 768) {
+    if (this.viewportWidth < this.breakWidth) {
       this.createSliderControll(numCards);
     }
     window.addEventListener("resize", () =>
@@ -24,7 +24,7 @@ class CardSliderComponent extends HTMLElement {
     const appTitle = document.createElement("h3");
     appTitle.className = "app-title";
     appTitle.textContent =
-      this.viewportWidth < 768
+      this.viewportWidth < this.breakWidth
         ? "Complete your dog look"
         : "You might find those interesting";
 
@@ -33,12 +33,12 @@ class CardSliderComponent extends HTMLElement {
     const container = document.createElement("div");
     container.className = "container";
 
-    for (let i = 0; i < numCards; i++) {
+    for (let count = 0; count < numCards; count++) {
       const card = document.createElement("div");
       card.className = "card";
 
-      if (i < cardData?.length) {
-        const data = cardData[i];
+      if (count < cardData?.length) {
+        const data = cardData[count];
         card.innerHTML = `
           <img src="${data.image}" alt="Card Image">
           <h2 class="card-title">${data.title}</h2>
@@ -192,17 +192,19 @@ class CardSliderComponent extends HTMLElement {
     this.shadowRoot.appendChild(wrapper);
   }
   showSlides(n) {
-    let i;
     const slides = this.shadowRoot.querySelectorAll(".card");
     let dots = this.shadowRoot.querySelectorAll(".dot");
 
     let slideIndex = n;
 
-    for (i = 0; i < slides.length; i++) {
-      slides[i].style.display = "none";
+    for (let slidePointer = 0; slidePointer < slides.length; slidePointer++) {
+      slides[slidePointer].style.display = "none";
     }
-    for (i = 0; i < dots.length; i++) {
-      dots[i].className = dots[i].className.replace(" active", "");
+    for (let dotPointer = 0; dotPointer < dots.length; dotPointer++) {
+      dots[dotPointer].className = dots[dotPointer].className.replace(
+        " active",
+        ""
+      );
     }
     slides[slideIndex].style.display = "block";
     if (slideIndex + 1 < slides.length) {
@@ -229,12 +231,12 @@ class CardSliderComponent extends HTMLElement {
     dotContainer.id = "dotContainer";
     this.viewportWidth = window.innerWidth;
 
-    if (this.viewportWidth < 768) {
+    if (this.viewportWidth < this.breakWidth) {
       appTitle.textContent = "Complete your dog look";
-      for (let i = 0; i < numCards; i++) {
+      for (let count = 0; count < numCards; count++) {
         const dotElem = document.createElement("span");
         dotElem.className = "dot";
-        dotElem.onclick = () => this.currentSlide(i);
+        dotElem.onclick = () => this.currentSlide(count);
 
         dotContainer.appendChild(dotElem);
       }
