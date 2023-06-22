@@ -5,23 +5,24 @@ class CardSliderComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    const numCards = parseInt(this.getAttribute("num-cards")) || 4;
+    const cardData = JSON.parse(this.getAttribute("slider-data")) || [];
+    const numCards = cardData.length || 4;
+    this.render(numCards, cardData);
+    this.viewportWidth = window.innerWidth;
 
     this.current = 0;
-    this.render(numCards);
+    this.render(numCards, cardData);
+    if (this.viewportWidth < 768) {
+      this.createSliderControll(numCards);
+    }
     window.addEventListener("resize", () =>
       this.createSliderControll(numCards)
     );
   }
 
-  render(numCards) {
-    const appTitleDiv = document.createElement("div");
-    appTitleDiv.className = "app-title-div";
-    const appTitle = document.createElement("h3");
-    appTitle.className = "app-title";
-    appTitle.innerHTML = " You might find those interesting";
-    appTitleDiv.appendChild(appTitle);
-
+  render(numCards, cardData) {
+    const appTitle = document.getElementById("appTitle");
+    appTitle.innerHTML = "You might find those interesting";
     const wrapper = document.createElement("div");
     wrapper.className = "wrapper";
     const container = document.createElement("div");
@@ -30,32 +31,22 @@ class CardSliderComponent extends HTMLElement {
     for (let i = 0; i < numCards; i++) {
       const card = document.createElement("div");
       card.className = "card";
-
-      const cardImage = document.createElement("img");
-      cardImage.src =
-        "https://tractive.com/assets/image/shop-frontend/product/trnjaca/tractive-gps-dog-4-spare-charger.png";
-      cardImage.alt = "Card Image";
-      card.appendChild(cardImage);
-
-      const cardTitle = document.createElement("h2");
-      cardTitle.className = "card-title";
-      cardTitle.textContent = `Card ${i + 1}`;
-      card.appendChild(cardTitle);
-
-      const cardPrice = document.createElement("h5");
-      cardPrice.className = "card-price";
-      cardPrice.textContent = `$ 9.99`;
-      card.appendChild(cardPrice);
-
-      const cardButton = document.createElement("button");
-      cardButton.className = "card-button";
-      cardButton.textContent = "Add to cart";
-      card.appendChild(cardButton);
-
-      // Append the card to the container
+      if (i < cardData?.length) {
+        const data = cardData[i];
+        card.innerHTML = `
+          <img src="${data.image}" alt="Card Image">
+          <h2 class="card-title">${data.title}</h2>
+          <h5 class="card-price">$ ${data.price}</h5>
+          <button class="card-button">Add to cart</button>
+        `;
+      }
       container.appendChild(card);
       wrapper.appendChild(container);
-      appTitleDiv.appendChild(wrapper);
+
+      // Append the card to the container
+
+      // wrapper.appendChild(container);
+      // appTitleDiv.appendChild(wrapper);
       //   this.createSliderControll(numCards);
     }
 
@@ -193,7 +184,8 @@ class CardSliderComponent extends HTMLElement {
     
       `;
 
-    this.shadowRoot.appendChild(appTitleDiv);
+    // Append appTitleDiv to the shadow root
+    this.shadowRoot.appendChild(wrapper);
   }
   showSlides(n) {
     let i;
@@ -218,16 +210,22 @@ class CardSliderComponent extends HTMLElement {
     this.current = currentCardIndex;
     this.showSlides(currentCardIndex);
   }
+
   createSliderControll(numCards) {
-    const appTitle = this.shadowRoot.querySelector(".app-title");
+    const appTitle = document.getElementById("appTitle");
 
     const wrapper = this.shadowRoot.querySelector(".wrapper");
+    const existingDotContainer = this.shadowRoot.querySelector("#dotContainer");
 
+    if (existingDotContainer) {
+      existingDotContainer.remove();
+    }
     const dotContainer = document.createElement("div");
     dotContainer.className = "slider-dots";
     dotContainer.id = "dotContainer";
-    const viewportWidth = window.innerWidth;
-    if (viewportWidth < 768) {
+    this.viewportWidth = window.innerWidth;
+
+    if (this.viewportWidth < 768) {
       appTitle.innerHTML = "Complete your dog look";
       for (let i = 0; i < numCards; i++) {
         const dotElem = document.createElement("span");

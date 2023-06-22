@@ -2,12 +2,12 @@
   body{
     width: 90%;
     margin: 0 auto;
-    overflow: hidden;
+    overflow:hidden !important; 
     padding: 100px 0px;
   }
  
   @media (max-width: 768px) {
     body{
-        overflow: hidden;
+        overflow: hidden !important;
     }
   }
