@@ -7,26 +7,27 @@ class CardSliderComponent extends HTMLElement {
   connectedCallback() {
     const cardData = JSON.parse(this.getAttribute("slider-data")) || [];
     const numCards = cardData.length || 4;
+    const titleData = JSON.parse(this.getAttribute("title-data")) || [];
+
+    console.log({ titleData });
     this.render(numCards, cardData);
     this.viewportWidth = window.innerWidth;
     this.breakWidth = 768;
     this.current = 0;
-    this.render(numCards, cardData);
+    this.render(numCards, cardData, titleData);
     if (this.viewportWidth < this.breakWidth) {
-      this.createSliderControll(numCards);
+      this.createSliderControll(numCards, titleData);
     }
     window.addEventListener("resize", () =>
-      this.createSliderControll(numCards)
+      this.createSliderControll(numCards, titleData)
     );
   }
 
-  render(numCards, cardData) {
+  render(numCards, cardData, titleData) {
     const appTitle = document.createElement("h3");
     appTitle.className = "app-title";
     appTitle.textContent =
-      this.viewportWidth < this.breakWidth
-        ? "Complete your dog look"
-        : "You might find those interesting";
+      this.viewportWidth < this.breakWidth ? titleData?.mobile : titleData?.web;
 
     const wrapper = document.createElement("div");
     wrapper.className = "wrapper";
@@ -68,6 +69,7 @@ class CardSliderComponent extends HTMLElement {
         margin-top: 25px;
         display: flex;
         align-items: center;
+        flex-flow:wrap;
         /* justify-content: space-between; */
       }
       
@@ -82,6 +84,7 @@ class CardSliderComponent extends HTMLElement {
         text-align: center;
         height: 350px;
         padding-bottom: 15px;
+        margin-bottom: 20px;
       }
     .card-title,.card-price {
         text-align: center;
@@ -151,12 +154,16 @@ class CardSliderComponent extends HTMLElement {
         display: -webkit-box !important;
         white-space: nowrap;
         padding-bottom: 30px !important;
+        flex-wrap: nowrap !important;
+
       
         }
         .slider-dots{
           display: flex;
         justify-content: center;
         align-items: center;
+        width: 35%;
+        margin: 0 auto !important;
         }
         
           .dot {
@@ -217,7 +224,7 @@ class CardSliderComponent extends HTMLElement {
     this.showSlides(currentCardIndex);
   }
 
-  createSliderControll(numCards) {
+  createSliderControll(numCards, titleData) {
     const appTitle = this.shadowRoot.querySelector(".app-title");
 
     const wrapper = this.shadowRoot.querySelector(".wrapper");
@@ -232,7 +239,7 @@ class CardSliderComponent extends HTMLElement {
     this.viewportWidth = window.innerWidth;
 
     if (this.viewportWidth < this.breakWidth) {
-      appTitle.textContent = "Complete your dog look";
+      appTitle.textContent = titleData?.mobile;
       for (let count = 0; count < numCards; count++) {
         const dotElem = document.createElement("span");
         dotElem.className = "dot";
@@ -240,7 +247,8 @@ class CardSliderComponent extends HTMLElement {
 
         dotContainer.appendChild(dotElem);
       }
-      wrapper.appendChild(dotContainer);
+      this.shadowRoot.appendChild(dotContainer);
+      // wrapper.appendChild(dotContainer);
       const cards = this.shadowRoot.querySelectorAll(".card");
       cards.forEach((card, index) => {
         if (index === this.current || index === this.current + 1) {
@@ -251,7 +259,7 @@ class CardSliderComponent extends HTMLElement {
         }
       });
     } else {
-      appTitle.textContent = "You might find those interesting";
+      appTitle.textContent = titleData?.web;
       const cards = this.shadowRoot.querySelectorAll(".card");
       cards.forEach((card) => {
         card.style.display = "block";

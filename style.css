@@ -2,7 +2,7 @@
   body{
     width: 90%;
     margin: 0 auto;
-    overflow:hidden !important; 
+    overflow-x:hidden !important; 
     padding: 100px 0px;
   }
  
